@@ -7,6 +7,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import java.util.Random;
 
 public class Blackjack extends Application {
 
@@ -77,17 +78,67 @@ public class Blackjack extends Application {
         StackPane kingCard = new StackPane(card2, topLetter2, bottomLetter2);
         kingCard.setTranslateX(-40);
         kingCard.setRotate(-10);
+        bottomLetter2.setRotate(180);
 
-        bottomLetter.setRotate(180);
-        StackPane finalLoading = new StackPane(aceCard, kingCard, welcome);
-        Scene scene = new Scene(finalLoading, 640, 480);
+        Rectangle start = new Rectangle(200, 55);
+        start.setArcHeight(55);
+        start.setArcWidth(40);
+        start.setFill(Color.GREEN);
+        start.setStroke(Color.BLACK);
+        start.setStrokeWidth(3);
+        Text startTxt = new Text("Start Game");
+        startTxt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
+        startTxt.setFill(Color.BLACK);
+        StackPane startBtn = new StackPane(start, startTxt);
+        startBtn.setTranslateY(140);
+
+        StackPane currentScene = new StackPane(aceCard, kingCard, welcome, startBtn);
+        Scene scene = new Scene(currentScene, 640, 480);
 
         stage.setTitle("Blackjack");
         stage.setScene(scene);
         stage.show();
+
+        startBtn.setOnMouseClicked(startClicked -> {
+            int balance = 100;
+            int betAmount = 1;
+            Rectangle times2Rect = new Rectangle(200, 55);
+            times2Rect.setArcHeight(55);
+            times2Rect.setArcWidth(40);
+            times2Rect.setFill(Color.GREEN);
+            times2Rect.setStroke(Color.BLACK);
+            times2Rect.setStrokeWidth(3);
+            Text times2Txt = new Text("Start Game");
+            times2Txt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
+            times2Txt.setFill(Color.BLACK);
+            StackPane times2Btn = new StackPane(times2Rect, times2Txt);
+            times2Btn.setTranslateY(140);
+            times2Btn.setOnMouseClicked(potTimes2 -> {
+                if (betAmount*2 <= balance) {
+                betAmount = betAmount*2;
+                }
+            });
+            Rectangle divide2Rect = new Rectangle(200, 55);
+            divide2Rect.setArcHeight(55);
+            divide2Rect.setArcWidth(40);
+            divide2Rect.setFill(Color.GREEN);
+            divide2Rect.setStroke(Color.BLACK);
+            divide2Rect.setStrokeWidth(3);
+            Text divide2Txt = new Text("Start Game");
+            divide2Txt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
+            divide2Txt.setFill(Color.BLACK);
+            StackPane divide2Btn = new StackPane(divide2Rect, divide2Txt);
+            divide2Btn.setTranslateY(140);
+            divide2Btn.setOnMouseClicked(potDivide2 -> {
+                if (betAmount >= 1) {
+                betAmount = betAmount / 2;
+                }
+            });
+
+        });
     }
+}
 
     public static void main(String[] args) {
         launch(args);
     }
-}
