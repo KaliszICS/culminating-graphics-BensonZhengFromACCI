@@ -11,9 +11,12 @@ import java.util.Random;
 
 public class Blackjack extends Application {
 
+    private int balance = 100;
+    private int betAmount = 1;
+
     @Override
     public void start(Stage stage) {
-
+        
         Text welcome = new Text("Welcome to BlackJack");
         welcome.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
         welcome.setFill(Color.BLACK);
@@ -91,7 +94,6 @@ public class Blackjack extends Application {
         startTxt.setFill(Color.BLACK);
         StackPane startBtn = new StackPane(start, startTxt);
         startBtn.setTranslateY(140);
-
         StackPane currentScene = new StackPane(aceCard, kingCard, welcome, startBtn);
         Scene scene = new Scene(currentScene, 640, 480);
 
@@ -100,45 +102,65 @@ public class Blackjack extends Application {
         stage.show();
 
         startBtn.setOnMouseClicked(startClicked -> {
-            int balance = 100;
-            int betAmount = 1;
-            Rectangle times2Rect = new Rectangle(200, 55);
-            times2Rect.setArcHeight(55);
+            currentScene.setVisible(false);
+            ///double bet button visual
+            Rectangle times2Rect = new Rectangle(70, 55);
+            times2Rect.setArcHeight(40);
             times2Rect.setArcWidth(40);
             times2Rect.setFill(Color.GREEN);
             times2Rect.setStroke(Color.BLACK);
             times2Rect.setStrokeWidth(3);
-            Text times2Txt = new Text("Start Game");
+            Text times2Txt = new Text("2x");
             times2Txt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
             times2Txt.setFill(Color.BLACK);
             StackPane times2Btn = new StackPane(times2Rect, times2Txt);
-            times2Btn.setTranslateY(140);
-            times2Btn.setOnMouseClicked(potTimes2 -> {
-                if (betAmount*2 <= balance) {
-                betAmount = betAmount*2;
-                }
-            });
-            Rectangle divide2Rect = new Rectangle(200, 55);
-            divide2Rect.setArcHeight(55);
+            times2Btn.setTranslateX(100);
+            times2Btn.setTranslateY(160);
+            ///half bet button visual
+            Rectangle divide2Rect = new Rectangle(70, 55);
+            divide2Rect.setArcHeight(40);
             divide2Rect.setArcWidth(40);
             divide2Rect.setFill(Color.GREEN);
             divide2Rect.setStroke(Color.BLACK);
             divide2Rect.setStrokeWidth(3);
-            Text divide2Txt = new Text("Start Game");
+            Text divide2Txt = new Text("1/2");
             divide2Txt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
             divide2Txt.setFill(Color.BLACK);
             StackPane divide2Btn = new StackPane(divide2Rect, divide2Txt);
-            divide2Btn.setTranslateY(140);
-            divide2Btn.setOnMouseClicked(potDivide2 -> {
-                if (betAmount >= 1) {
-                betAmount = betAmount / 2;
+            divide2Btn.setTranslateX(-100);
+            divide2Btn.setTranslateY(160);
+            ///pot display
+            Rectangle displayPot = new Rectangle(200, 55);
+            displayPot.setArcHeight(40);
+            displayPot.setArcWidth(40);
+            displayPot.setFill(Color.GREEN);
+            displayPot.setStroke(Color.BLACK);
+            displayPot.setStrokeWidth(3);
+            Text displayPotTxt = new Text(balance.toString));
+            displayPotTxt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
+            displayPotTxt.setFill(Color.BLACK);
+            StackPane displayPotA = new StackPane(divide2Rect, divide2Txt);
+            displayPotA.setTranslateX(-100);
+            displayPotA.setTranslateY(160);
+            
+            ///pot display and half/double button code
+            divide2Btn.setOnMouseClicked(divide2 -> {
+                if (betAmount/2 >= 1) {
+                    betAmount = betAmount / 2;
                 }
             });
-
+            times2Btn.setOnMouseClicked(dimes2 -> {
+                if (betAmount*2 <= balance) {
+                    betAmount = betAmount*2;
+                }
+            });
+            StackPane gamePane = new StackPane(times2Btn, divide2Btn, displayPotA);
+            Text title = new Text("Blackjack");
+            gamePane.getChildren().add(title);
+            scene.setRoot(gamePane);
         });
     }
-}
-
     public static void main(String[] args) {
         launch(args);
     }
+}
