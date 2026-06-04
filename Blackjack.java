@@ -1,5 +1,6 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -7,6 +8,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import java.util.Queue;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Collections;
 import java.util.Random;
 
 public class Blackjack extends Application {
@@ -83,16 +90,16 @@ public class Blackjack extends Application {
         kingCard.setRotate(-10);
         bottomLetter2.setRotate(180);
 
-        Rectangle start = new Rectangle(200, 55);
-        start.setArcHeight(55);
-        start.setArcWidth(40);
-        start.setFill(Color.GREEN);
-        start.setStroke(Color.BLACK);
-        start.setStrokeWidth(3);
+        Rectangle startRect = new Rectangle(200, 55);
+        startRect.setArcHeight(55);
+        startRect.setArcWidth(40);
+        startRect.setFill(Color.GREEN);
+        startRect.setStroke(Color.BLACK);
+        startRect.setStrokeWidth(3);
         Text startTxt = new Text("Start Game");
         startTxt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
         startTxt.setFill(Color.BLACK);
-        StackPane startBtn = new StackPane(start, startTxt);
+        StackPane startBtn = new StackPane(startRect, startTxt);
         startBtn.setTranslateY(140);
         StackPane currentScene = new StackPane(aceCard, kingCard, welcome, startBtn);
         Scene scene = new Scene(currentScene, 640, 480);
@@ -102,7 +109,6 @@ public class Blackjack extends Application {
         stage.show();
 
         startBtn.setOnMouseClicked(startClicked -> {
-            currentScene.setVisible(false);
             ///double bet button visual
             Rectangle times2Rect = new Rectangle(70, 55);
             times2Rect.setArcHeight(40);
@@ -113,9 +119,14 @@ public class Blackjack extends Application {
             Text times2Txt = new Text("2x");
             times2Txt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
             times2Txt.setFill(Color.BLACK);
-            StackPane times2Btn = new StackPane(times2Rect, times2Txt);
-            times2Btn.setTranslateX(100);
-            times2Btn.setTranslateY(160);
+            Pane times2Btn = new Pane();
+            /// edits position on button pane
+            times2Txt.setLayoutX(22);
+            times2Txt.setLayoutY(35);
+            times2Btn.getChildren().addAll(times2Rect, times2Txt);
+            /// edits position on display pane
+            times2Btn.setLayoutX(450);
+            times2Btn.setLayoutY(350);
             ///half bet button visual
             Rectangle divide2Rect = new Rectangle(70, 55);
             divide2Rect.setArcHeight(40);
@@ -126,41 +137,101 @@ public class Blackjack extends Application {
             Text divide2Txt = new Text("1/2");
             divide2Txt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
             divide2Txt.setFill(Color.BLACK);
-            StackPane divide2Btn = new StackPane(divide2Rect, divide2Txt);
-            divide2Btn.setTranslateX(-100);
-            divide2Btn.setTranslateY(160);
+            Pane divide2Btn = new Pane();
+            /// edits position on button pane
+            divide2Txt.setLayoutX(15);
+            divide2Txt.setLayoutY(35);
+            divide2Btn.getChildren().addAll(divide2Rect, divide2Txt);
+            /// edits position on entire screen
+            divide2Btn.setLayoutX(120);
+            divide2Btn.setLayoutY(350);
             ///pot display
-            Rectangle displayPot = new Rectangle(200, 55);
+            Rectangle displayPot = new Rectangle(150, 55);
             displayPot.setArcHeight(40);
             displayPot.setArcWidth(40);
             displayPot.setFill(Color.GREEN);
             displayPot.setStroke(Color.BLACK);
             displayPot.setStrokeWidth(3);
-            Text displayPotTxt = new Text(balance.toString));
+            Text displayPotTxt = new Text("$" + betAmount + ".0");
             displayPotTxt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 24));
             displayPotTxt.setFill(Color.BLACK);
-            StackPane displayPotA = new StackPane(divide2Rect, divide2Txt);
-            displayPotA.setTranslateX(-100);
-            displayPotA.setTranslateY(160);
+            Pane displayPotA = new Pane();
+            /// edits position on display pane
+            displayPotTxt.setLayoutX(65);
+            displayPotTxt.setLayoutY(35);
+            displayPotA.getChildren().addAll(displayPot, displayPotTxt);
+            /// edits position on entire screen
+            displayPotA.setLayoutX(245);
+            displayPotA.setLayoutY(350);
             
             ///pot display and half/double button code
-            divide2Btn.setOnMouseClicked(divide2 -> {
+            /// checks if value after is valid
+            divide2Btn.setOnMouseClicked(event -> {
                 if (betAmount/2 >= 1) {
                     betAmount = betAmount / 2;
+                    displayPotTxt.setText(String.valueOf("$" + betAmount + ".0"));
+                    System.out.println("23230");
                 }
             });
-            times2Btn.setOnMouseClicked(dimes2 -> {
+            times2Btn.setOnMouseClicked(event -> {
+                /// checks if value after is valid
                 if (betAmount*2 <= balance) {
                     betAmount = betAmount*2;
+                    displayPotTxt.setText(String.valueOf("$" + betAmount + ".0"));
+                    System.out.println("1000");
                 }
             });
-            StackPane gamePane = new StackPane(times2Btn, divide2Btn, displayPotA);
-            Text title = new Text("Blackjack");
-            gamePane.getChildren().add(title);
+            Pane gamePane = new Pane(times2Btn, divide2Btn, displayPotA);
             scene.setRoot(gamePane);
+
+            
         });
     }
+    public class Deck {
+        private Queue<String> deck = new LinkedList<>();
+            public Deck() {
+                buildDeck();
+                shuffleDeck();
+            }
+            /// creates deck of 52 cards
+            private void buildDeck() {
+                /// place value and suits into array
+                String[] value = {"A","2","3","4","5","6","7","8","9","10","J","Q","K"};
+                String[] suits = {"Hearts","Diamonds","Clubs","Spades"};
+                /// creates each card by taking each value and making one of each suit
+                /// adds into queue for shuffling later
+                for (int start = 0; start < value.length; start++) {
+                    for (int start2 = 0; start2 < suits.length; start2++) {
+                        deck.add(value[start] + ", " + suits[start2]);
+                    }
+                }
+            }
+            /// shuffle deck
+            public void shuffleDeck() {
+                List<String> shuffled = new ArrayList<>(deck);
+                Collections.shuffle(shuffled);
+                ///clears old organised deck adds temporary shuffled deck
+                deck.clear();
+                deck.addAll(shuffled);
+            }
+            /// draw card
+            public String drawCard() {
+                if (deck.isEmpty()) {
+                    return "Deck is empty";
+                }
+                /// removes top most card
+                return deck.remove();
+            }
+            /// remaining cards
+            public int cardsLeft() {
+                /// *(!@U)(*!*(@*!*(!@ make display for this later ********!*!*@!_(@(*@**(!@)!@*)!@*!@)(!@*)!@*!
+                return deck.size();
+            }
+        }
+
     public static void main(String[] args) {
         launch(args);
     }
+
 }
+
