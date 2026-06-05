@@ -18,7 +18,7 @@ import java.util.Random;
 
 public class Blackjack extends Application {
 
-    private int balance = 100;
+    private int balance = 50;
     private int betAmount = 1;
 
     @Override
@@ -63,7 +63,7 @@ public class Blackjack extends Application {
         aceCard.setTranslateY(-20);
         aceCard.setRotate(10);
 
-        ///
+        /// king card loading screen
         Rectangle card2 = new Rectangle(cardWidth, cardHeight);
         card2.setFill(Color.WHITE);
         card2.setStroke(Color.BLACK);
@@ -109,11 +109,51 @@ public class Blackjack extends Application {
         stage.show();
 
         startBtn.setOnMouseClicked(startClicked -> {
+            /// Place Your Bet text
+            Text placeYourBet = new Text("Place your bet and confirm");
+            placeYourBet.setStroke(Color.BLACK);
+            placeYourBet.setStrokeWidth(3);
+            placeYourBet.setFill(Color.WHITE);
+            placeYourBet.setFont(Font.font("Arial", FontWeight.BOLD, 34));
+            placeYourBet.setLayoutX(scene.getWidth()/2 - placeYourBet.getBoundsInLocal().getWidth()/2);
+            placeYourBet.setLayoutY(scene.getHeight()/2);
+            /// confirm bet button
+            Rectangle confirmRect = new Rectangle(150, 55);
+            confirmRect.setArcHeight(40);
+            confirmRect.setArcWidth(40);
+            confirmRect.setFill(Color.WHITESMOKE);
+            confirmRect.setStroke(Color.BLACK);
+            confirmRect.setStrokeWidth(3);
+            Text confirmTxt = new Text("Confirm");
+            confirmTxt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 20));
+            confirmTxt.setFill(Color.BLACK);
+            Pane confirmBtn = new Pane();
+            confirmTxt.setLayoutX(30);
+            confirmTxt.setLayoutY(35);
+            confirmBtn.getChildren().addAll(confirmRect, confirmTxt);
+            /// directly above bet display
+            confirmBtn.setLayoutX(245);
+            confirmBtn.setLayoutY(370);
+            
+            /// Balance display panel
+            Rectangle displayBalRect = new Rectangle (150, 50);
+            displayBalRect.setArcHeight(40);
+            displayBalRect.setArcWidth(40);
+            displayBalRect.setStroke(Color.BLACK);
+            displayBalRect.setStrokeWidth(3);
+            displayBalRect.setFill(Color.WHITE);
+            Text displayBalTxt = new Text("$" + balance);
+            displayBalTxt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 12));
+            displayBalTxt.setTranslateX(10);
+            displayBalTxt.setTranslateY(22);
+            Pane displayBal = new Pane(displayBalRect, displayBalTxt);
+            displayBal.setLayoutX(scene.getWidth()/2 - displayBalRect.getWidth()/2);
+            displayBal.setLayoutY(scene.getHeight()/2 - 90);
             ///double bet button visual
             Rectangle times2Rect = new Rectangle(70, 55);
             times2Rect.setArcHeight(40);
             times2Rect.setArcWidth(40);
-            times2Rect.setFill(Color.GREEN);
+            times2Rect.setFill(Color.WHITE);
             times2Rect.setStroke(Color.BLACK);
             times2Rect.setStrokeWidth(3);
             Text times2Txt = new Text("2x");
@@ -126,12 +166,12 @@ public class Blackjack extends Application {
             times2Btn.getChildren().addAll(times2Rect, times2Txt);
             /// edits position on display pane
             times2Btn.setLayoutX(450);
-            times2Btn.setLayoutY(350);
+            times2Btn.setLayoutY(270);
             ///half bet button visual
             Rectangle divide2Rect = new Rectangle(70, 55);
             divide2Rect.setArcHeight(40);
             divide2Rect.setArcWidth(40);
-            divide2Rect.setFill(Color.GREEN);
+            divide2Rect.setFill(Color.WHITE);
             divide2Rect.setStroke(Color.BLACK);
             divide2Rect.setStrokeWidth(3);
             Text divide2Txt = new Text("1/2");
@@ -144,12 +184,12 @@ public class Blackjack extends Application {
             divide2Btn.getChildren().addAll(divide2Rect, divide2Txt);
             /// edits position on entire screen
             divide2Btn.setLayoutX(120);
-            divide2Btn.setLayoutY(350);
+            divide2Btn.setLayoutY(270);
             ///pot display
             Rectangle displayPot = new Rectangle(150, 55);
             displayPot.setArcHeight(40);
             displayPot.setArcWidth(40);
-            displayPot.setFill(Color.GREEN);
+            displayPot.setFill(Color.WHITE);
             displayPot.setStroke(Color.BLACK);
             displayPot.setStrokeWidth(3);
             Text displayPotTxt = new Text("$" + betAmount + ".0");
@@ -162,7 +202,7 @@ public class Blackjack extends Application {
             displayPotA.getChildren().addAll(displayPot, displayPotTxt);
             /// edits position on entire screen
             displayPotA.setLayoutX(245);
-            displayPotA.setLayoutY(350);
+            displayPotA.setLayoutY(270);
             
             ///pot display and half/double button code
             /// checks if value after is valid
@@ -181,7 +221,8 @@ public class Blackjack extends Application {
                     System.out.println("1000");
                 }
             });
-            Pane gamePane = new Pane(times2Btn, divide2Btn, displayPotA);
+            Pane gamePane = new Pane(placeYourBet, confirmBtn, times2Btn, 
+                                     divide2Btn, displayPotA, displayBal);
             scene.setRoot(gamePane);
 
             
