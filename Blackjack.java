@@ -16,8 +16,12 @@ import java.util.List;
 import java.util.Collections;
 import java.util.Random;
 
+import org.w3c.dom.css.Rect;
+
 public class Blackjack extends Application {
 
+    private int playerHandValue = 0;
+    private int aceCount = 0;
     private int balance = 50;
     private int betAmount = 1;
 
@@ -225,127 +229,159 @@ public class Blackjack extends Application {
                                      divide2Btn, displayPotA, displayBal);
             scene.setRoot(gamePane);
         
-            confirmBtn.setOnMouseClicked( event -> {
+            confirmBtn.setOnMouseClicked(event -> {
+            playerHandValue = 0;
+            aceCount = 0;
+            boolean gameOver = false;
+            
             Pane blackjackPane = new Pane();
             double buttonWidth = 120;
             double buttonHeight = 50;
             double margin2 = 30;
-            double  sceneBottomY = scene.getHeight() - buttonHeight - margin2;
-
+            double sceneBottomY = scene.getHeight() - buttonHeight - margin2;
             Deck deck = new Deck();
-
             String initialCard1 = deck.drawCard();
             String initialCard2 = deck.drawCard();
+            String initialCard3 = deck.drawCard();
+            String initialCard4 = deck.drawCard();
+            // helper method logic (
+            String[] cards = {initialCard1, initialCard2, initialCard3, initialCard4};
 
-            /// draw initial cards with variables
-            /// get the cards and separate value from suit
-            int comma1 = initialCard1.indexOf(",");
-            String value1 = initialCard1.substring(0, comma1);
-            String suit1 = initialCard1.substring(comma1 + 2);
-            int comma2 = initialCard2.indexOf(",");
-            String value2 = initialCard2.substring(0, comma2);
-            String suit2 = initialCard2.substring(comma2 + 2);
-            /// suits to symbols on card visual
-            String suitSymbol1 = "";
-            if (suit1.equals("Hearts")) suitSymbol1 = "♥";
-            else if (suit1.equals("Diamonds")) suitSymbol1 = "♦";
-            else if (suit1.equals("Clubs")) suitSymbol1 = "♣";
-            else if (suit1.equals("Spades")) suitSymbol1 = "♠";
-            String suitSymbol2 = "";
-            if (suit2.equals("Hearts")) suitSymbol2 = "♥";
-            else if (suit2.equals("Diamonds")) suitSymbol2 = "♦";
-            else if (suit2.equals("Clubs")) suitSymbol2 = "♣";
-            else if (suit2.equals("Spades")) suitSymbol2 = "♠";
-            /// first card
-            Rectangle card1 = new Rectangle(100, 140);
-            card1.setFill(Color.WHITE);
-            card1.setStroke(Color.BLACK);
-            card1.setArcWidth(10);
-            card1.setArcHeight(10);
-            Text card1Value = new Text(value1);
-            card1Value.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-            card1Value.setTranslateX(-30);
-            card1Value.setTranslateY(-45);
-            Text card1Suit = new Text(suitSymbol1);
-            card1Suit.setFont(Font.font("Arial", 30));
-            StackPane playerCard1 = new StackPane(card1, card1Value, card1Suit);
-            playerCard1.setLayoutX(250);
-            playerCard1.setLayoutY(150);
-            /// second card
-            Rectangle card2 = new Rectangle(100, 140);
-            card2.setFill(Color.WHITE);
-            card2.setStroke(Color.BLACK);
-            card2.setArcWidth(10);
-            card2.setArcHeight(10);
-            Text card2Value = new Text(value2);
-            card2Value.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-            card2Value.setTranslateX(-30);
-            card2Value.setTranslateY(-45);
-            Text card2Suit = new Text(suitSymbol2);
-            card2Suit.setFont(Font.font("Arial", 30));
-            StackPane playerCard2 = new StackPane(card2, card2Value, card2Suit);
-            playerCard2.setLayoutX(370);
-            playerCard2.setLayoutY(150);
-            /// Stand Button
+            StackPane[] playerCards = new StackPane[4];
+
+            double card2Width = 100;
+            double gap = 20;
+            double startX = 90;
+            String value = "";
+            for (int start = 0; start < 4; start++) {
+                int comma = cards[start].indexOf(",");
+                value = cards[start].substring(0, comma);
+                String suit = cards[start].substring(comma + 2);
+                /// make symbol for cards
+                String suitSymbol = "";
+                if (suit.equals("Hearts")) suitSymbol = "♥";
+                else if (suit.equals("Diamonds")) suitSymbol = "♦";
+                else if (suit.equals("Clubs")) suitSymbol = "♣";
+                else if (suit.equals("Spades")) suitSymbol = "♠";
+
+                ///draws 4 player cards
+                Rectangle card = new Rectangle(100, 140);
+                card.setFill(Color.WHITE);
+                card.setStroke(Color.BLACK);
+                card.setArcWidth(10);
+                card.setArcHeight(10);
+                Text cardValue = new Text(value);
+                cardValue.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+                cardValue.setTranslateX(-30);
+                cardValue.setTranslateY(-45);
+                Text cardSuit = new Text(suitSymbol);
+                cardSuit.setFont(Font.font("Arial", 30));
+
+                StackPane playerCard = new StackPane(card, cardValue, cardSuit);
+                playerCard.setLayoutX(startX + start * (card2Width + gap));
+                playerCard.setLayoutY(250);
+                playerCards[start] = playerCard;
+            }
+            // actions buttons
             Rectangle standRect = new Rectangle(buttonWidth, buttonHeight);
             standRect.setArcWidth(20);
             standRect.setArcHeight(20);
             standRect.setFill(Color.WHITE);
             standRect.setStroke(Color.BLACK);
-            standRect.setStrokeWidth(3);
             Text standTxt = new Text("Stand");
             standTxt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 18));
             StackPane standBtn = new StackPane(standRect, standTxt);
             standBtn.setLayoutX(margin2);
             standBtn.setLayoutY(sceneBottomY);
-            /// Hit Button
             Rectangle hitRect = new Rectangle(buttonWidth, buttonHeight);
             hitRect.setArcWidth(20);
             hitRect.setArcHeight(20);
             hitRect.setFill(Color.WHITE);
             hitRect.setStroke(Color.BLACK);
-            hitRect.setStrokeWidth(3);
             Text hitTxt = new Text("Hit");
             hitTxt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 18));
             StackPane hitBtn = new StackPane(hitRect, hitTxt);
             hitBtn.setLayoutX(margin2 + (buttonWidth + margin2));
             hitBtn.setLayoutY(sceneBottomY);
-            /// Split Button
             Rectangle splitRect = new Rectangle(buttonWidth, buttonHeight);
             splitRect.setArcWidth(20);
             splitRect.setArcHeight(20);
             splitRect.setFill(Color.WHITE);
             splitRect.setStroke(Color.BLACK);
-            splitRect.setStrokeWidth(3);
             Text splitTxt = new Text("Split");
             splitTxt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 18));
             StackPane splitBtn = new StackPane(splitRect, splitTxt);
             splitBtn.setLayoutX(margin2 + 2 * (buttonWidth + margin2));
             splitBtn.setLayoutY(sceneBottomY);
-            /// Double Button
             Rectangle doubleRect = new Rectangle(buttonWidth, buttonHeight);
             doubleRect.setArcWidth(20);
             doubleRect.setArcHeight(20);
             doubleRect.setFill(Color.WHITE);
             doubleRect.setStroke(Color.BLACK);
-            doubleRect.setStrokeWidth(3);
             Text doubleTxt = new Text("Double");
             doubleTxt.setFont(Font.font("Times New Roman", FontWeight.BOLD, 18));
             StackPane doubleBtn = new StackPane(doubleRect, doubleTxt);
             doubleBtn.setLayoutX(margin2 + 3 * (buttonWidth + margin2));
             doubleBtn.setLayoutY(sceneBottomY);
-            
-            blackjackPane.getChildren().addAll(standBtn, hitBtn, card1, 
-                                               card2, splitBtn, doubleBtn);
+
+            blackjackPane.getChildren().addAll(
+                playerCards[0], playerCards[1],
+                standBtn, hitBtn, splitBtn, doubleBtn
+            );
             scene.setRoot(blackjackPane);
-            standBtn.setOnMouseClicked(standClicked -> {
-                
+
+            int playerHandValue = 0;
+            playerHandValue += getCardValue(initialCard1);
+            playerHandValue += getCardValue(initialCard2);
+            
+            hitBtn.setOnMouseClicked(hit -> {
+            if (gameOver) return;
+
+            String newCard = deck.drawCard();
+            playerHandValue += getCardValue(newCard);
+
+            if (playerHandValue > 21) {
+                gameOver = true;
+
+                Text bustTxt = new Text("You Busted!");
+                bustTxt.setLayoutX(320);
+                bustTxt.setLayoutY(240);
+
+                Pane losePane = new Pane(bustTxt);
+                scene.setRoot(losePane);
+            }
+        });
+            if (playerHandValue > 21) {
+                Pane currentGameLostPane = new Pane();
+                Text bustTxt = new Text ("You Busted (Value over 21)");
+                bustTxt.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+                bustTxt.setLayoutX(320);
+                bustTxt.setLayoutY(240);
+                Rectangle newBlackjackGame = new Rectangle();
+
+                scene.setRoot(currentGameLostPane);
+            }
             });
         });
-
-        });
-        
     }
+    private int getCardValue(String card) {
+
+    int comma = card.indexOf(",");
+    String value = card.substring(0, comma);
+
+    if (value.equals("J") || value.equals("Q") || value.equals("K")) {
+        return 10;
+    }
+    else if (value.equals("A")) {
+        if (playerHandValue > 10) {
+            return 1;
+        }
+        else return 11;
+    }
+    else {
+        return Integer.parseInt(value);
+    }
+}
     public class Deck {
         private Queue<String> deck = new LinkedList<>();
             public Deck() {
@@ -387,8 +423,8 @@ public class Blackjack extends Application {
                 return deck.size();
             }
     
-
-    }
+        }
+    
 
 
 
