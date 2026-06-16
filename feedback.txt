@@ -1,0 +1,18 @@
+K(30%): 100
+I(30%): 70
+C(10%): 80
+A(30%): 90
+86%
+
+
+Use Methods and Scenes!
+You keep remaking buttons that are identical to each other with small changes.
+This could be significantly reduced by making a method to make said buttons.
+
+You are going to the game over screen without showing the dealer's hand that knocked them out.
+Stand and double are doing the exact same calculations.  Use a function when you have exactly the same code!
+
+Some of your graphics bug out during double when the dealer draws a bunch of cards.
+Double's extra card drawn can't be seen.  It also appears since busting is not checked, just getting a high of a number as possible wins for doubling since if the dealer busts you win anyway, and if they don't you still win even if you busted since you have a higher number.
+
+There are some areas that are harder to read that should have comments
